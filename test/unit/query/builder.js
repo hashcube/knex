@@ -20,7 +20,7 @@ function qb() {
   return clients.default.queryBuilder()
 }
 
-function raw(sql, bindings) { 
+function raw(sql, bindings) {
   return clients.default.raw(sql, bindings)
 }
 
@@ -30,7 +30,7 @@ function verifySqlResult(dialect, expectedObj, sqlObj) {
       expectedObj[key](sqlObj[key]);
     } else {
       try {
-        expect(sqlObj[key]).to.deep.equal(expectedObj[key]);  
+        expect(sqlObj[key]).to.deep.equal(expectedObj[key]);
       } catch (e) {
         e.stack = dialect + ': ' + e.stack
         throw e
@@ -39,7 +39,7 @@ function verifySqlResult(dialect, expectedObj, sqlObj) {
   });
 }
 
-function testsql(chain, valuesToCheck) {  
+function testsql(chain, valuesToCheck) {
   Object.keys(valuesToCheck).forEach(function(key) {
     var newChain = chain.clone()
         newChain.client = clients[key]
@@ -1309,6 +1309,19 @@ describe("QueryBuilder", function() {
       },
       default: {
         sql: 'insert into "users" ("email") values (?)',
+        bindings: ['foo']
+      }
+    });
+  });
+
+  it("insert ignore method", function() {
+    testsql(qb().into('users').insertIgnore({'email': 'foo'}), {
+      mysql: {
+        sql: 'insert ignore into `users` (`email`) values (?)',
+        bindings: ['foo']
+      },
+      default: {
+        sql: 'insert ignore into "users" ("email") values (?)',
         bindings: ['foo']
       }
     });
